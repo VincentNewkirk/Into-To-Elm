@@ -3,6 +3,7 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
 import String
+import Char
 
 
 
@@ -80,19 +81,26 @@ viewInput t p v toMsg =
 viewValidation : Model -> Html msg
 viewValidation model =
   if isInvalidAge model.age then
-    div [style "color" "red" ] [ text "Invalid Age" ]
+    generateErrorMessage "Invalid Age"
   else if isPasswordTooLong model.password then
-    div [style "color" "red" ] [ text "Password Too Long" ]
+    generateErrorMessage "Password Too Long"
+  else if not (verifyPasswordQuality model.password) then
+    generateErrorMessage "Password Must Contain An Upper Case Letter, Lower Case Letter and a Number"
   else if passwordsDontMatch model.password model.passwordAgain then
-    div [ style "color" "red" ] [ text "Passwords do not match!" ]
+    generateErrorMessage "Password Don't Match"
   else
     div [ style "color" "green" ] [ text "OK" ]
 
 
 -- FUNCTIONS
 
+generateErrorMessage message = div [style "color" "red" ] [ text message ]
+
 isInvalidAge a = String.toInt a == Nothing
 
 isPasswordTooLong p = String.length p > 8
 
 passwordsDontMatch one two = one /= two
+
+verifyPasswordQuality password =
+  String.any Char.isDigit password && String.any Char.isUpper password && String.any Char.isLower password
