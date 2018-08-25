@@ -81,13 +81,18 @@ viewValidation : Model -> Html msg
 viewValidation model =
   if isInvalidAge model.age then
     div [style "color" "red" ] [ text "Invalid Age" ]
-  else if String.length model.password > 8 then
+  else if isPasswordTooLong model.password then
     div [style "color" "red" ] [ text "Password Too Long" ]
-  else if model.password == model.passwordAgain then
-    div [ style "color" "green" ] [ text "OK" ]
-  else
+  else if passwordsDontMatch model.password model.passwordAgain then
     div [ style "color" "red" ] [ text "Passwords do not match!" ]
+  else
+    div [ style "color" "green" ] [ text "OK" ]
 
- -- FUNCTIONS
+
+-- FUNCTIONS
 
 isInvalidAge a = String.toInt a == Nothing
+
+isPasswordTooLong p = String.length p > 8
+
+passwordsDontMatch one two = one /= two
