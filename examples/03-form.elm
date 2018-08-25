@@ -2,7 +2,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import String exposing (length)
+import String
 
 
 
@@ -21,12 +21,13 @@ type alias Model =
   { name : String
   , password : String
   , passwordAgain : String
+  , age: String
   }
 
 
 init : Model
 init =
-  Model "" "" ""
+  Model "" "" "" ""
 
 
 
@@ -37,6 +38,7 @@ type Msg
   = Name String
   | Password String
   | PasswordAgain String
+  | Age String
 
 
 update : Msg -> Model -> Model
@@ -51,6 +53,9 @@ update msg model =
     PasswordAgain password ->
       { model | passwordAgain = password }
 
+    Age age ->
+      { model | age = age }
+
 
 
 -- VIEW
@@ -62,6 +67,7 @@ view model =
     [ viewInput "text" "Name" model.name Name
     , viewInput "password" "Password" model.password Password
     , viewInput "password" "Re-enter Password" model.passwordAgain PasswordAgain
+    , viewInput "text" "Age" model.age Age
     , viewValidation model
     ]
 
@@ -73,9 +79,15 @@ viewInput t p v toMsg =
 
 viewValidation : Model -> Html msg
 viewValidation model =
-  if length model.password > 8 then
+  if isInvalidAge model.age then
+    div [style "color" "red" ] [ text "Invalid Age" ]
+  else if String.length model.password > 8 then
     div [style "color" "red" ] [ text "Password Too Long" ]
   else if model.password == model.passwordAgain then
     div [ style "color" "green" ] [ text "OK" ]
   else
     div [ style "color" "red" ] [ text "Passwords do not match!" ]
+
+ -- FUNCTIONS
+
+isInvalidAge a = String.toInt a == Nothing
